@@ -12,6 +12,8 @@ interface KpiDefinition {
   label: string;
   value: string;
   helper: string;
+  target: string;
+  progress: number;
   accent: 'blue' | 'mint' | 'amber' | 'violet';
   icon: LucideIcon;
 }
@@ -27,6 +29,8 @@ export const KpiCards = memo(function KpiCards({
       label: 'Events in scope',
       value: eventsInScope.toLocaleString('en-US'),
       helper: 'validated and retained',
+      target: 'bounded live buffer',
+      progress: Math.min(100, (eventsInScope / 360) * 100),
       accent: 'blue',
       icon: Activity,
     },
@@ -34,6 +38,8 @@ export const KpiCards = memo(function KpiCards({
       label: 'Request rate',
       value: `${requestsPerMinute.toLocaleString('en-US')}/m`,
       helper: 'rolling traffic signal',
+      target: 'current delivery volume',
+      progress: Math.min(100, (requestsPerMinute / 30_000) * 100),
       accent: 'mint',
       icon: Radar,
     },
@@ -41,6 +47,8 @@ export const KpiCards = memo(function KpiCards({
       label: 'p95 latency',
       value: `${p95Latency} ms`,
       helper: 'from selected events',
+      target: 'target under 250 ms',
+      progress: Math.min(100, (p95Latency / 700) * 100),
       accent: 'amber',
       icon: Gauge,
     },
@@ -48,6 +56,8 @@ export const KpiCards = memo(function KpiCards({
       label: 'Healthy delivery',
       value: `${healthyRate.toFixed(1)}%`,
       helper: 'successful events only',
+      target: 'target above 99%',
+      progress: healthyRate,
       accent: 'violet',
       icon: ShieldCheck,
     },
@@ -67,7 +77,13 @@ export const KpiCards = memo(function KpiCards({
             </div>
             <p className="kpi-card__label">{metric.label}</p>
             <p className="kpi-card__value">{metric.value}</p>
-            <p className="kpi-card__helper">{metric.helper}</p>
+            <div className="kpi-card__footer">
+              <span>{metric.helper}</span>
+              <span>{metric.target}</span>
+            </div>
+            <div className={`metric-meter metric-meter--${metric.accent}`} aria-hidden="true">
+              <span style={{ width: `${metric.progress}%` }} />
+            </div>
           </article>
         );
       })}

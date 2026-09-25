@@ -66,7 +66,7 @@ export default function Home() {
       <header className="topbar">
         <a className="brand" href="#dashboard" aria-label="Pulse Monitor dashboard">
           <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span>pulse<span className="brand-slash">/</span>monitor</span>
+          <span className="brand-wordmark">pulse<span className="brand-slash">/</span>monitor<small>CONTROL ROOM</small></span>
         </a>
         <div className="topbar__center">
           <span className="environment-chip"><Globe2 size={14} aria-hidden="true" /> Production</span>
@@ -86,7 +86,7 @@ export default function Home() {
         <section className="page-intro">
           <div>
             <div className="breadcrumb"><span>Observability</span><ChevronRight size={14} aria-hidden="true" /><strong>Live overview</strong></div>
-            <h1>Operational pulse</h1>
+            <div className="headline-row"><h1>Operational pulse</h1><span className="headline-live"><i aria-hidden="true" /> Live</span></div>
             <p>Live service signals, narrowed to the scope you care about.</p>
           </div>
           <FilterBar
