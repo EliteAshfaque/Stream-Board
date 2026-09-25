@@ -12,14 +12,10 @@ import {
 
 import { formatDuration } from '@/src/utils/helpers';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
-
-export interface ChartPoint {
-  label: string;
-  latency: number;
-}
+import type { LatencyPoint } from '@/src/features/dashboard/model/dashboardMetrics';
 
 interface LiveChartProps {
-  points: ChartPoint[];
+  points: LatencyPoint[];
   averageLatency: number;
 }
 

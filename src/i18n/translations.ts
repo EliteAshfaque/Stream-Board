@@ -2,6 +2,7 @@ export type Language = 'en' | 'fr';
 
 export interface DashboardCopy {
   language: { label: string; english: string; french: string };
+  theme: { label: string; midnight: string; daylight: string };
   navigation: { production: string; liveClock: string; profile: string };
   hero: { section: string; view: string; title: string; description: string; live: string };
   filters: {
@@ -80,6 +81,7 @@ export interface DashboardCopy {
 export const translations: Record<Language, DashboardCopy> = {
   en: {
     language: { label: 'Language', english: 'English', french: 'French' },
+    theme: { label: 'Theme', midnight: 'Midnight', daylight: 'Daylight' },
     navigation: { production: 'Production', liveClock: 'UTC live', profile: 'Profile' },
     hero: {
       section: 'Observability',
@@ -127,6 +129,7 @@ export const translations: Record<Language, DashboardCopy> = {
   },
   fr: {
     language: { label: 'Langue', english: 'Anglais', french: 'Français' },
+    theme: { label: 'Thème', midnight: 'Minuit', daylight: 'Lumière' },
     navigation: { production: 'Production', liveClock: 'UTC en direct', profile: 'Profil' },
     hero: {
       section: 'Observabilité', view: 'Vue en direct', title: 'Pouls opérationnel',

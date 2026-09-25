@@ -7,11 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SERVICES, type ServiceName } from '@/src/types/event';
+import { SERVICES } from '@/src/types/event';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
+import type { ServiceFilter, TimeWindow } from '@/src/features/dashboard/model/dashboardFilters';
 
-export type ServiceFilter = ServiceName | 'all';
-export type TimeWindow = 1 | 5 | 15;
+export type { ServiceFilter, TimeWindow } from '@/src/features/dashboard/model/dashboardFilters';
 
 interface FilterBarProps {
   service: ServiceFilter;
