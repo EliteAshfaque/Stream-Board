@@ -1,6 +1,7 @@
 import { Activity, Gauge, Radar, ShieldCheck, type LucideIcon } from 'lucide-react';
 import { memo } from 'react';
 
+import { MAX_STORED_EVENTS } from '@/src/config/limits';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
 
 interface KpiCardsProps {
@@ -32,8 +33,8 @@ export const KpiCards = memo(function KpiCards({
       label: copy.metrics.events,
       value: eventsInScope.toLocaleString(formatLocale),
       helper: copy.metrics.eventsHelper,
-      target: copy.metrics.eventsTarget,
-      progress: Math.min(100, (eventsInScope / 360) * 100),
+      target: copy.metrics.eventsTarget(MAX_STORED_EVENTS),
+      progress: Math.min(100, (eventsInScope / MAX_STORED_EVENTS) * 100),
       accent: 'blue',
       icon: Activity,
     },

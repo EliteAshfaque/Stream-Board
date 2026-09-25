@@ -3,7 +3,8 @@ export type Language = 'en' | 'fr';
 export interface DashboardCopy {
   language: { label: string; english: string; french: string };
   theme: { label: string; midnight: string; daylight: string };
-  navigation: { production: string; liveClock: string; profile: string };
+  navigation: { environment: string; utc: string; profile: string };
+  footer: { product: string; tagline: string };
   hero: { section: string; view: string; title: string; description: string; live: string };
   filters: {
     label: string;
@@ -23,6 +24,7 @@ export interface DashboardCopy {
     resume: string;
     pause: string;
     waiting: string;
+    loadingHint: string;
     updatedNow: string;
     updatedSecondsAgo: (seconds: number) => string;
   };
@@ -30,7 +32,7 @@ export interface DashboardCopy {
     summary: string;
     events: string;
     eventsHelper: string;
-    eventsTarget: string;
+    eventsTarget: (max: number) => string;
     requestRate: string;
     requestRateHelper: string;
     requestRateTarget: string;
@@ -53,123 +55,203 @@ export interface DashboardCopy {
     title: string;
     retained: (count: number) => string;
     incoming: string;
-    max: string;
+    max: (max: number) => string;
     noMatches: string;
     healthy: string;
     warning: string;
     critical: string;
   };
-  guardrails: {
+  status: {
     title: string;
     description: string;
     accepted: (count: string) => string;
     rejected: (count: number) => string;
   };
-  publicActivity: {
+  github: {
     eyebrow: string;
     title: string;
     description: string;
     source: string;
-    cache: string;
     loading: string;
     unavailable: string;
-    noActivity: string;
-    refreshed: string;
+    empty: string;
+    updated: string;
   };
 }
 
 export const translations: Record<Language, DashboardCopy> = {
   en: {
     language: { label: 'Language', english: 'English', french: 'French' },
-    theme: { label: 'Theme', midnight: 'Midnight', daylight: 'Daylight' },
-    navigation: { production: 'Production', liveClock: 'UTC live', profile: 'Profile' },
+    theme: { label: 'Theme', midnight: 'Dark', daylight: 'Light' },
+    navigation: { environment: 'Local', utc: 'UTC', profile: 'Account' },
+    footer: {
+      product: 'Stream Board',
+      tagline: 'Live monitoring dashboard',
+    },
     hero: {
-      section: 'Observability',
-      view: 'Live overview',
-      title: 'Operational pulse',
-      description: 'Live service signals, narrowed to the scope you care about.',
+      section: 'Monitoring',
+      view: 'Overview',
+      title: 'Live dashboard',
+      description: 'Watch latency, health, and recent events as they come in.',
       live: 'Live',
     },
     filters: {
-      label: 'Scope', service: 'Service', allServices: 'All services', timeWindow: 'Time window',
-      lastMinute: 'Last minute', lastFiveMinutes: 'Last 5 minutes', lastFifteenMinutes: 'Last 15 minutes',
+      label: 'Filters',
+      service: 'Service',
+      allServices: 'All services',
+      timeWindow: 'Time range',
+      lastMinute: 'Last minute',
+      lastFiveMinutes: 'Last 5 minutes',
+      lastFifteenMinutes: 'Last 15 minutes',
     },
     connection: {
-      connecting: 'Establishing a secure stream', live: 'Stream is healthy', paused: 'Feed paused locally',
-      reconnecting: 'Reconnecting with backoff', error: 'Stream needs attention', resume: 'Resume feed',
-      pause: 'Pause feed', waiting: 'waiting for data', updatedNow: 'updated just now',
-      updatedSecondsAgo: (seconds) => `updated ${seconds}s ago`,
+      connecting: 'Connecting…',
+      live: 'Connected',
+      paused: 'Paused',
+      reconnecting: 'Reconnecting…',
+      error: 'Disconnected',
+      resume: 'Resume',
+      pause: 'Pause',
+      waiting: 'Waiting for data',
+      loadingHint: 'This usually takes a second.',
+      updatedNow: 'Just now',
+      updatedSecondsAgo: (seconds) => `${seconds}s ago`,
     },
     metrics: {
-      summary: 'Live performance summary', events: 'Events in scope', eventsHelper: 'validated and retained',
-      eventsTarget: 'bounded live buffer', requestRate: 'Request rate', requestRateHelper: 'rolling traffic signal',
-      requestRateTarget: 'current delivery volume', p95Latency: 'p95 latency', p95Helper: 'from selected events',
-      p95Target: 'target under 250 ms', healthyDelivery: 'Healthy delivery', healthyHelper: 'successful events only',
-      healthyTarget: 'target above 99%',
+      summary: 'Summary',
+      events: 'Events',
+      eventsHelper: 'in this range',
+      eventsTarget: (max) => `${max} max`,
+      requestRate: 'Rate',
+      requestRateHelper: 'per minute',
+      requestRateTarget: 'this range',
+      p95Latency: 'p95 latency',
+      p95Helper: 'this range',
+      p95Target: 'under 250 ms',
+      healthyDelivery: 'Healthy',
+      healthyHelper: 'ok events',
+      healthyTarget: '99% target',
     },
     chart: {
-      eyebrow: 'Live metric', title: 'Latency pulse', description: 'Request settlement time across the selected stream.',
-      average: 'Avg', waiting: 'Waiting for validated events',
+      eyebrow: 'Latency',
+      title: 'Response time',
+      description: 'How long requests are taking in the current range.',
+      average: 'Avg',
+      waiting: 'No data yet',
     },
     events: {
-      eyebrow: 'Event trail', title: 'Recent activity', retained: (count) => `${count} retained events · virtualized list`,
-      incoming: 'New events will appear here.', max: '360 max', noMatches: 'No events match this scope yet.',
-      healthy: 'Healthy', warning: 'Watch', critical: 'Critical',
+      eyebrow: 'Feed',
+      title: 'Recent events',
+      retained: (count) => `${count} events`,
+      incoming: 'Events will show up here.',
+      max: (max) => `${max} max`,
+      noMatches: 'Nothing in this range.',
+      healthy: 'Healthy',
+      warning: 'Warning',
+      critical: 'Critical',
     },
-    guardrails: {
-      title: 'Guardrails active', description: 'Schema validation · 350 ms batch commits · 360 event memory cap',
-      accepted: (count) => `${count} accepted`, rejected: (count) => `${count} rejected`,
+    status: {
+      title: 'Services',
+      description: 'Latest status for each service.',
+      accepted: (count) => `${count} received`,
+      rejected: (count) => `${count} skipped`,
     },
-    publicActivity: {
-      eyebrow: 'Public data source', title: 'Open-source activity',
-      description: 'Recent public events from GitHub, cached locally for a calmer interface.',
-      source: 'GitHub public events', cache: 'TanStack Query · 60 s cache', loading: 'Refreshing public activity',
-      unavailable: 'Public activity is temporarily unavailable.', noActivity: 'No public activity was returned.', refreshed: 'Refreshed',
+    github: {
+      eyebrow: 'GitHub',
+      title: 'Public activity',
+      description: 'Recent public events from GitHub.',
+      source: 'GitHub',
+      loading: 'Loading…',
+      unavailable: 'Couldn’t load GitHub events.',
+      empty: 'No events right now.',
+      updated: 'Updated',
     },
   },
   fr: {
     language: { label: 'Langue', english: 'Anglais', french: 'Français' },
-    theme: { label: 'Thème', midnight: 'Minuit', daylight: 'Lumière' },
-    navigation: { production: 'Production', liveClock: 'UTC en direct', profile: 'Profil' },
+    theme: { label: 'Thème', midnight: 'Sombre', daylight: 'Clair' },
+    navigation: { environment: 'Local', utc: 'UTC', profile: 'Compte' },
+    footer: {
+      product: 'Stream Board',
+      tagline: 'Tableau de suivi en direct',
+    },
     hero: {
-      section: 'Observabilité', view: 'Vue en direct', title: 'Pouls opérationnel',
-      description: 'Signaux de service en direct, limités au périmètre qui vous intéresse.', live: 'Direct',
+      section: 'Suivi',
+      view: 'Aperçu',
+      title: 'Tableau de bord',
+      description: 'Latence, santé des services et événements récents.',
+      live: 'Direct',
     },
     filters: {
-      label: 'Périmètre', service: 'Service', allServices: 'Tous les services', timeWindow: 'Période',
-      lastMinute: 'Dernière minute', lastFiveMinutes: '5 dernières minutes', lastFifteenMinutes: '15 dernières minutes',
+      label: 'Filtres',
+      service: 'Service',
+      allServices: 'Tous les services',
+      timeWindow: 'Période',
+      lastMinute: 'Dernière minute',
+      lastFiveMinutes: '5 dernières minutes',
+      lastFifteenMinutes: '15 dernières minutes',
     },
     connection: {
-      connecting: 'Connexion sécurisée au flux', live: 'Le flux est sain', paused: 'Flux interrompu localement',
-      reconnecting: 'Reconnexion avec délai progressif', error: 'Le flux demande une attention', resume: 'Reprendre le flux',
-      pause: 'Mettre le flux en pause', waiting: 'en attente de données', updatedNow: 'mis à jour à l’instant',
-      updatedSecondsAgo: (seconds) => `mis à jour il y a ${seconds} s`,
+      connecting: 'Connexion…',
+      live: 'Connecté',
+      paused: 'En pause',
+      reconnecting: 'Reconnexion…',
+      error: 'Déconnecté',
+      resume: 'Reprendre',
+      pause: 'Pause',
+      waiting: 'En attente',
+      loadingHint: 'Cela ne prend en général qu’une seconde.',
+      updatedNow: 'À l’instant',
+      updatedSecondsAgo: (seconds) => `Il y a ${seconds} s`,
     },
     metrics: {
-      summary: 'Résumé des performances en direct', events: 'Événements du périmètre', eventsHelper: 'validés et conservés',
-      eventsTarget: 'tampon de flux limité', requestRate: 'Rythme des requêtes', requestRateHelper: 'signal de trafic glissant',
-      requestRateTarget: 'volume actuel', p95Latency: 'Latence p95', p95Helper: 'événements sélectionnés',
-      p95Target: 'objectif sous 250 ms', healthyDelivery: 'Livraison saine', healthyHelper: 'événements réussis uniquement',
-      healthyTarget: 'objectif au-dessus de 99 %',
+      summary: 'Résumé',
+      events: 'Événements',
+      eventsHelper: 'sur cette période',
+      eventsTarget: (max) => `${max} max`,
+      requestRate: 'Débit',
+      requestRateHelper: 'par minute',
+      requestRateTarget: 'cette période',
+      p95Latency: 'Latence p95',
+      p95Helper: 'cette période',
+      p95Target: 'sous 250 ms',
+      healthyDelivery: 'Sains',
+      healthyHelper: 'événements ok',
+      healthyTarget: 'objectif 99 %',
     },
     chart: {
-      eyebrow: 'Mesure en direct', title: 'Pouls de latence', description: 'Temps de traitement des requêtes du flux sélectionné.',
-      average: 'Moy.', waiting: 'En attente d’événements validés',
+      eyebrow: 'Latence',
+      title: 'Temps de réponse',
+      description: 'Durée des requêtes sur la période choisie.',
+      average: 'Moy.',
+      waiting: 'Pas encore de données',
     },
     events: {
-      eyebrow: 'Fil des événements', title: 'Activité récente', retained: (count) => `${count} événements conservés · liste virtualisée`,
-      incoming: 'Les nouveaux événements apparaîtront ici.', max: '360 max.', noMatches: 'Aucun événement ne correspond encore à ce périmètre.',
-      healthy: 'Sain', warning: 'À surveiller', critical: 'Critique',
+      eyebrow: 'Flux',
+      title: 'Événements récents',
+      retained: (count) => `${count} événements`,
+      incoming: 'Les événements apparaîtront ici.',
+      max: (max) => `${max} max`,
+      noMatches: 'Rien sur cette période.',
+      healthy: 'Sain',
+      warning: 'Alerte',
+      critical: 'Critique',
     },
-    guardrails: {
-      title: 'Protections actives', description: 'Validation du schéma · lots de 350 ms · mémoire limitée à 360 événements',
-      accepted: (count) => `${count} acceptés`, rejected: (count) => `${count} rejetés`,
+    status: {
+      title: 'Services',
+      description: 'Dernier état de chaque service.',
+      accepted: (count) => `${count} reçus`,
+      rejected: (count) => `${count} ignorés`,
     },
-    publicActivity: {
-      eyebrow: 'Source publique', title: 'Activité open source',
-      description: 'Événements GitHub publics récents, mis en cache localement pour une interface plus calme.',
-      source: 'Événements GitHub publics', cache: 'TanStack Query · cache de 60 s', loading: 'Actualisation de l’activité publique',
-      unavailable: 'L’activité publique est temporairement indisponible.', noActivity: 'Aucune activité publique reçue.', refreshed: 'Actualisé',
+    github: {
+      eyebrow: 'GitHub',
+      title: 'Activité publique',
+      description: 'Événements publics récents sur GitHub.',
+      source: 'GitHub',
+      loading: 'Chargement…',
+      unavailable: 'Impossible de charger GitHub.',
+      empty: 'Aucun événement pour le moment.',
+      updated: 'Mis à jour',
     },
   },
 };

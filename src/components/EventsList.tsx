@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle2, CircleDotDashed, ServerCrash } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 
+import { MAX_STORED_EVENTS } from '@/src/config/limits';
 import type { EventStatus, LiveEvent } from '@/src/types/event';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
 import { formatDuration, formatTime } from '@/src/utils/helpers';
@@ -47,7 +48,7 @@ export const EventsList = memo(function EventsList({ events }: EventsListProps) 
           <h2 id="events-heading">{copy.events.title}</h2>
           <p>{events.length ? copy.events.retained(events.length) : copy.events.incoming}</p>
         </div>
-        <span className="retention-badge">{copy.events.max}</span>
+        <span className="retention-badge">{copy.events.max(MAX_STORED_EVENTS)}</span>
       </div>
 
       {events.length ? (

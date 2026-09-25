@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { FLUSH_INTERVAL_MS, MAX_PENDING_EVENTS, MAX_STORED_EVENTS } from '@/src/config/limits';
 import { createSimulatedStream, type LiveTransport } from '@/src/services/streamClient';
 import type {
   ConnectionState,
@@ -8,10 +9,6 @@ import type {
   StreamSnapshot,
 } from '@/src/types/event';
 import { parseLiveEvent } from '@/src/utils/validate';
-
-const MAX_EVENTS = 360;
-const MAX_PENDING_EVENTS = 240;
-const FLUSH_INTERVAL_MS = 350;
 
 const initialSnapshot: StreamSnapshot = {
   events: [],
@@ -24,10 +21,7 @@ interface UseLiveStreamOptions {
   createTransport?: () => LiveTransport;
 }
 
-/**
- * Buffers messages outside React, then commits short batches. This keeps the
- * render cadence predictable under bursts while retaining a bounded history.
- */
+/** Batches incoming events so the UI does not re-render on every message. */
 export function useLiveStream(options: UseLiveStreamOptions = {}): StreamControls {
   const { createTransport } = options;
   const [connection, setConnection] = useState<ConnectionState>('connecting');
@@ -46,7 +40,7 @@ export function useLiveStream(options: UseLiveStreamOptions = {}): StreamControl
     if (!batch.length && !rejected) return;
 
     setSnapshot((current) => {
-      const nextEvents = [...batch].reverse().concat(current.events).slice(0, MAX_EVENTS);
+      const nextEvents = [...batch].reverse().concat(current.events).slice(0, MAX_STORED_EVENTS);
       return {
         events: nextEvents,
         accepted: current.accepted + batch.length,

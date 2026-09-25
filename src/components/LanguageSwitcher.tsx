@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/src/components/Select';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
 import type { Language } from '@/src/i18n/translations';
 

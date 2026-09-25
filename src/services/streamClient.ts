@@ -29,9 +29,8 @@ interface SimulatedStreamOptions {
 }
 
 /**
- * A deterministic-shape local transport for the assessment. The app receives
- * JSON strings here exactly as it would from a WebSocket/SSE transport; the
- * hook remains responsible for treating every payload as untrusted.
+ * Local stream used for the dashboard. Payloads are JSON strings,
+ * same as a WebSocket or SSE feed would send.
  */
 class SimulatedStream implements LiveTransport {
   private readonly messageListeners = new Set<MessageListener>();

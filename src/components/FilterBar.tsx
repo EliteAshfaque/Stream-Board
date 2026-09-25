@@ -6,12 +6,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/src/components/Select';
 import { SERVICES } from '@/src/types/event';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
-import type { ServiceFilter, TimeWindow } from '@/src/features/dashboard/model/dashboardFilters';
-
-export type { ServiceFilter, TimeWindow } from '@/src/features/dashboard/model/dashboardFilters';
+import type { ServiceFilter, TimeWindow } from '@/src/types/event';
 
 interface FilterBarProps {
   service: ServiceFilter;

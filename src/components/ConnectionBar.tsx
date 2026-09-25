@@ -1,6 +1,6 @@
 import { CirclePause, CirclePlay, LoaderCircle, RotateCw, WifiOff } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/src/components/Button';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
 import type { ConnectionState } from '@/src/types/event';
 

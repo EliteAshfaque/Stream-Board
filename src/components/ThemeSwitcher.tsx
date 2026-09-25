@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/src/components/Select';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
-import { useTheme, type AppTheme } from '@/src/theme/ThemeProvider';
+import { useTheme, type AppTheme } from '@/src/providers/ThemeProvider';
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();

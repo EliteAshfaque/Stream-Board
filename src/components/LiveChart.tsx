@@ -12,7 +12,7 @@ import {
 
 import { formatDuration } from '@/src/utils/helpers';
 import { useLanguage } from '@/src/i18n/LanguageProvider';
-import type { LatencyPoint } from '@/src/features/dashboard/model/dashboardMetrics';
+import type { LatencyPoint } from '@/src/utils/metrics';
 
 interface LiveChartProps {
   points: LatencyPoint[];

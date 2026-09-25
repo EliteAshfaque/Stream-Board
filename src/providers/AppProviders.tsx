@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 
 import { LanguageProvider } from '@/src/i18n/LanguageProvider';
-import { ThemeProvider } from '@/src/theme/ThemeProvider';
+import { ThemeProvider } from '@/src/providers/ThemeProvider';
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(

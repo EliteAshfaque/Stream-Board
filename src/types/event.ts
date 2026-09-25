@@ -6,6 +6,9 @@ export const EVENT_STATUSES = ['healthy', 'warning', 'critical'] as const;
 
 export type EventStatus = (typeof EVENT_STATUSES)[number];
 
+export type TimeWindow = 1 | 5 | 15;
+export type ServiceFilter = ServiceName | 'all';
+
 export type ConnectionState =
   | 'connecting'
   | 'live'
