@@ -2,7 +2,8 @@ import { AlertTriangle, CheckCircle2, CircleDotDashed, ServerCrash } from 'lucid
 import { memo, useCallback, useMemo, useState } from 'react';
 
 import type { EventStatus, LiveEvent } from '@/src/types/event';
-import { formatDuration, formatTime, statusLabel } from '@/src/utils/helpers';
+import { useLanguage } from '@/src/i18n/LanguageProvider';
+import { formatDuration, formatTime } from '@/src/utils/helpers';
 
 const ROW_HEIGHT = 72;
 const VIEWPORT_HEIGHT = 360;
@@ -19,6 +20,7 @@ const statusIcon: Record<EventStatus, typeof CheckCircle2> = {
 };
 
 export const EventsList = memo(function EventsList({ events }: EventsListProps) {
+  const { copy, formatLocale } = useLanguage();
   const [scrollTop, setScrollTop] = useState(0);
   const visibleRange = useMemo(() => {
     const start = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
@@ -31,16 +33,21 @@ export const EventsList = memo(function EventsList({ events }: EventsListProps) 
   }, []);
 
   const visibleEvents = events.slice(visibleRange.start, visibleRange.end);
+  const statusLabels: Record<EventStatus, string> = {
+    healthy: copy.events.healthy,
+    warning: copy.events.warning,
+    critical: copy.events.critical,
+  };
 
   return (
     <section className="panel events-panel" aria-labelledby="events-heading">
       <div className="panel-heading events-panel__heading">
         <div>
-          <p className="eyebrow"><CircleDotDashed size={14} aria-hidden="true" /> Event trail</p>
-          <h2 id="events-heading">Recent activity</h2>
-          <p>{events.length ? `${events.length} retained events · virtualized list` : 'New events will appear here.'}</p>
+          <p className="eyebrow"><CircleDotDashed size={14} aria-hidden="true" /> {copy.events.eyebrow}</p>
+          <h2 id="events-heading">{copy.events.title}</h2>
+          <p>{events.length ? copy.events.retained(events.length) : copy.events.incoming}</p>
         </div>
-        <span className="retention-badge">360 max</span>
+        <span className="retention-badge">{copy.events.max}</span>
       </div>
 
       {events.length ? (
@@ -56,7 +63,7 @@ export const EventsList = memo(function EventsList({ events }: EventsListProps) 
                 const StatusIcon = statusIcon[event.status];
                 return (
                   <article className="event-row" key={event.id}>
-                    <span className={`event-status event-status--${event.status}`} title={statusLabel(event.status)}>
+                    <span className={`event-status event-status--${event.status}`} title={statusLabels[event.status]}>
                       <StatusIcon size={16} aria-hidden="true" />
                     </span>
                     <div className="event-row__main">
@@ -71,7 +78,7 @@ export const EventsList = memo(function EventsList({ events }: EventsListProps) 
                     </div>
                     <div className="event-row__stats">
                       <strong>{formatDuration(event.latencyMs)}</strong>
-                      <span>{formatTime(event.at)}</span>
+                      <span>{formatTime(event.at, formatLocale)}</span>
                     </div>
                   </article>
                 );
@@ -80,7 +87,7 @@ export const EventsList = memo(function EventsList({ events }: EventsListProps) 
           </div>
         </div>
       ) : (
-        <div className="event-empty">No events match this scope yet.</div>
+        <div className="event-empty">{copy.events.noMatches}</div>
       )}
     </section>
   );

@@ -1,0 +1,17 @@
+{
+  "name": "Pulse Monitor Live Operations",
+  "short_name": "Pulse Monitor",
+  "description": "A live operations dashboard with defended streams and cached public activity.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d17",
+  "theme_color": "#090d17",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

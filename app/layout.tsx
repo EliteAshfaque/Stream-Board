@@ -1,10 +1,19 @@
 import type { Metadata } from 'next';
 
+import { AppProviders } from '@/src/providers/AppProviders';
+
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Pulse Monitor',
-  description: 'A high-frequency, defensive live monitoring dashboard.',
+  title: 'Pulse Monitor | Live Operations',
+  applicationName: 'Pulse Monitor',
+  description: 'A live operations dashboard with defended streams and cached public activity.',
+  manifest: '/site.webmanifest',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
@@ -14,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body><AppProviders>{children}</AppProviders></body>
     </html>
   );
 }

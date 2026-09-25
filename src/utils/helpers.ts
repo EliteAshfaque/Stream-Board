@@ -16,8 +16,8 @@ export function formatDuration(value: number): string {
   return `${(value / 1_000).toFixed(1)} s`;
 }
 
-export function formatTime(value: number): string {
-  return new Intl.DateTimeFormat('en-US', {
+export function formatTime(value: number, locale = 'en-US'): string {
+  return new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',

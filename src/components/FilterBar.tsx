@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SERVICES, type ServiceName } from '@/src/types/event';
+import { useLanguage } from '@/src/i18n/LanguageProvider';
 
 export type ServiceFilter = ServiceName | 'all';
 export type TimeWindow = 1 | 5 | 15;
@@ -25,20 +26,21 @@ export function FilterBar({
   onServiceChange,
   onTimeWindowChange,
 }: FilterBarProps) {
+  const { copy } = useLanguage();
   return (
     <div className="filter-bar" aria-label="Dashboard filters">
       <span className="filter-bar__label">
         <SlidersHorizontal size={15} aria-hidden="true" />
-        Scope
+        {copy.filters.label}
       </span>
       <div className="select-field">
-        <span className="sr-only">Service</span>
+        <span className="sr-only">{copy.filters.service}</span>
         <Select value={service} onValueChange={(value) => onServiceChange(value as ServiceFilter)}>
-          <SelectTrigger className="dashboard-select" aria-label="Service filter">
-            <SelectValue placeholder="All services" />
+          <SelectTrigger className="dashboard-select" aria-label={copy.filters.service}>
+            <SelectValue placeholder={copy.filters.allServices} />
           </SelectTrigger>
           <SelectContent className="dashboard-select__content">
-            <SelectItem value="all">All services</SelectItem>
+            <SelectItem value="all">{copy.filters.allServices}</SelectItem>
             {SERVICES.map((item) => (
               <SelectItem key={item} value={item}>
                 {item}
@@ -48,19 +50,19 @@ export function FilterBar({
         </Select>
       </div>
       <div className="select-field">
-        <span className="sr-only">Time window</span>
+        <span className="sr-only">{copy.filters.timeWindow}</span>
         <Clock3 size={15} aria-hidden="true" />
         <Select
           value={String(timeWindow)}
           onValueChange={(value) => onTimeWindowChange(Number(value) as TimeWindow)}
         >
-          <SelectTrigger className="dashboard-select" aria-label="Time window">
+          <SelectTrigger className="dashboard-select" aria-label={copy.filters.timeWindow}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="dashboard-select__content">
-            <SelectItem value="1">Last minute</SelectItem>
-            <SelectItem value="5">Last 5 minutes</SelectItem>
-            <SelectItem value="15">Last 15 minutes</SelectItem>
+            <SelectItem value="1">{copy.filters.lastMinute}</SelectItem>
+            <SelectItem value="5">{copy.filters.lastFiveMinutes}</SelectItem>
+            <SelectItem value="15">{copy.filters.lastFifteenMinutes}</SelectItem>
           </SelectContent>
         </Select>
       </div>

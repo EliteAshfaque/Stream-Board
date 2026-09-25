@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 
 import { formatDuration } from '@/src/utils/helpers';
+import { useLanguage } from '@/src/i18n/LanguageProvider';
 
 export interface ChartPoint {
   label: string;
@@ -42,17 +43,18 @@ function ChartTooltip({
 }
 
 export const LiveChart = memo(function LiveChart({ points, averageLatency }: LiveChartProps) {
+  const { copy } = useLanguage();
   return (
     <section className="panel chart-panel" aria-labelledby="latency-heading">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow"><Activity size={14} aria-hidden="true" /> Live metric</p>
-          <h2 id="latency-heading">Latency pulse</h2>
-          <p>Request settlement time across the selected stream.</p>
+          <p className="eyebrow"><Activity size={14} aria-hidden="true" /> {copy.chart.eyebrow}</p>
+          <h2 id="latency-heading">{copy.chart.title}</h2>
+          <p>{copy.chart.description}</p>
         </div>
         <div className="chart-summary">
           <ChartNoAxesCombined size={16} aria-hidden="true" />
-          <span>Avg</span>
+          <span>{copy.chart.average}</span>
           <strong>{averageLatency || 0} ms</strong>
         </div>
       </div>
@@ -94,7 +96,7 @@ export const LiveChart = memo(function LiveChart({ points, averageLatency }: Liv
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="chart-empty">Waiting for validated events</div>
+          <div className="chart-empty">{copy.chart.waiting}</div>
         )}
       </div>
     </section>

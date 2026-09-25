@@ -1,8 +1,8 @@
 import { CirclePause, CirclePlay, LoaderCircle, RotateCw, WifiOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/src/i18n/LanguageProvider';
 import type { ConnectionState } from '@/src/types/event';
-import { timeSince } from '@/src/utils/helpers';
 
 interface ConnectionBarProps {
   connection: ConnectionState;
@@ -11,23 +11,24 @@ interface ConnectionBarProps {
   onResume: () => void;
 }
 
-const copy: Record<ConnectionState, string> = {
-  connecting: 'Establishing a secure stream',
-  live: 'Stream is healthy',
-  paused: 'Feed paused locally',
-  reconnecting: 'Reconnecting with backoff',
-  error: 'Stream needs attention',
-};
-
 export function ConnectionBar({
   connection,
   lastUpdatedAt,
   onPause,
   onResume,
 }: ConnectionBarProps) {
+  const { copy } = useLanguage();
   const isPaused = connection === 'paused';
   const isWorking = connection === 'connecting' || connection === 'reconnecting';
   const isError = connection === 'error';
+  const stateCopy: Record<ConnectionState, string> = {
+    connecting: copy.connection.connecting,
+    live: copy.connection.live,
+    paused: copy.connection.paused,
+    reconnecting: copy.connection.reconnecting,
+    error: copy.connection.error,
+  };
+  const updateCopy = lastUpdatedAt ? copy.connection.updatedNow : copy.connection.waiting;
 
   return (
     <section className={`connection-bar connection-bar--${connection}`} aria-live="polite">
@@ -37,9 +38,9 @@ export function ConnectionBar({
           <p className="connection-bar__title">
             {isError ? <WifiOff size={15} aria-hidden="true" /> : null}
             {isWorking ? <LoaderCircle className="spin" size={15} aria-hidden="true" /> : null}
-            {copy[connection]}
+            {stateCopy[connection]}
           </p>
-          <p className="connection-bar__detail">{timeSince(lastUpdatedAt)}</p>
+          <p className="connection-bar__detail">{updateCopy}</p>
         </div>
       </div>
 
@@ -50,7 +51,7 @@ export function ConnectionBar({
         disabled={isWorking || isError}
       >
         {isPaused ? <CirclePlay size={16} aria-hidden="true" /> : <CirclePause size={16} aria-hidden="true" />}
-        {isPaused ? 'Resume feed' : 'Pause feed'}
+        {isPaused ? copy.connection.resume : copy.connection.pause}
       </Button>
 
       {connection === 'reconnecting' ? (

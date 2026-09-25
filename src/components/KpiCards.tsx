@@ -1,6 +1,8 @@
 import { Activity, Gauge, Radar, ShieldCheck, type LucideIcon } from 'lucide-react';
 import { memo } from 'react';
 
+import { useLanguage } from '@/src/i18n/LanguageProvider';
+
 interface KpiCardsProps {
   eventsInScope: number;
   requestsPerMinute: number;
@@ -24,39 +26,40 @@ export const KpiCards = memo(function KpiCards({
   p95Latency,
   healthyRate,
 }: KpiCardsProps) {
+  const { copy, formatLocale } = useLanguage();
   const metrics: KpiDefinition[] = [
     {
-      label: 'Events in scope',
-      value: eventsInScope.toLocaleString('en-US'),
-      helper: 'validated and retained',
-      target: 'bounded live buffer',
+      label: copy.metrics.events,
+      value: eventsInScope.toLocaleString(formatLocale),
+      helper: copy.metrics.eventsHelper,
+      target: copy.metrics.eventsTarget,
       progress: Math.min(100, (eventsInScope / 360) * 100),
       accent: 'blue',
       icon: Activity,
     },
     {
-      label: 'Request rate',
-      value: `${requestsPerMinute.toLocaleString('en-US')}/m`,
-      helper: 'rolling traffic signal',
-      target: 'current delivery volume',
+      label: copy.metrics.requestRate,
+      value: `${requestsPerMinute.toLocaleString(formatLocale)}/m`,
+      helper: copy.metrics.requestRateHelper,
+      target: copy.metrics.requestRateTarget,
       progress: Math.min(100, (requestsPerMinute / 30_000) * 100),
       accent: 'mint',
       icon: Radar,
     },
     {
-      label: 'p95 latency',
+      label: copy.metrics.p95Latency,
       value: `${p95Latency} ms`,
-      helper: 'from selected events',
-      target: 'target under 250 ms',
+      helper: copy.metrics.p95Helper,
+      target: copy.metrics.p95Target,
       progress: Math.min(100, (p95Latency / 700) * 100),
       accent: 'amber',
       icon: Gauge,
     },
     {
-      label: 'Healthy delivery',
+      label: copy.metrics.healthyDelivery,
       value: `${healthyRate.toFixed(1)}%`,
-      helper: 'successful events only',
-      target: 'target above 99%',
+      helper: copy.metrics.healthyHelper,
+      target: copy.metrics.healthyTarget,
       progress: healthyRate,
       accent: 'violet',
       icon: ShieldCheck,
@@ -64,7 +67,7 @@ export const KpiCards = memo(function KpiCards({
   ];
 
   return (
-    <section className="kpi-grid" aria-label="Live performance summary">
+    <section className="kpi-grid" aria-label={copy.metrics.summary}>
       {metrics.map((metric) => {
         const Icon = metric.icon;
         return (
